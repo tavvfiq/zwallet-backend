@@ -70,7 +70,6 @@ const authModel = {
 				if (err) {
 					reject({ msg: "query error" });
 				}
-				console.log(data);
 				if (data.length === 0) {
 					const msg = "User not found. Please register first";
 					reject({ msg });
@@ -91,7 +90,7 @@ const authModel = {
 									balance,
 								} = data[0];
 								const payload = {
-									email,
+									email: body.email,
 								};
 								const token = jwt.sign(
 									payload,
@@ -116,28 +115,6 @@ const authModel = {
 			});
 		});
 	},
-	// userData: (id) => {
-	// 	return new Promise((resolve, reject) => {
-	// 		const userQuery = `SELECT id, first_name, last_name, profile_image, phone_number, level_id FROM users WHERE users.id=?`;
-	// 		database.query(userQuery, [id], (err, data) => {
-	// 			if (err) {
-	// 				reject({ msg: "User not found" });
-	// 			}
-	// 			resolve(data);
-	// 		});
-	// 	});
-	// },
-	// updateUser: (id, body) => {
-	// 	return new Promise((resolve, reject) => {
-	// 		const userQuery = `START TRANSACTION;UPDATE users SET ? WHERE users.id=?; SELECT id,first_name, last_name, profile_image, phone_number, level_id FROM users WHERE users.id=?;COMMIT;`;
-	// 		database.query(userQuery, [body, id, id], (err, data) => {
-	// 			if (err) {
-	// 				reject({ msg: "User not found" });
-	// 			}
-	// 			resolve(data[2][0]);
-	// 		});
-	// 	});
-	// },
 };
 
 module.exports = authModel;

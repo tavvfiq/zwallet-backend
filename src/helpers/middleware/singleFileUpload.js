@@ -46,7 +46,7 @@ const singleFileUpload = {
 				try {
 					req.body.image = `${process.env.API_URL}/images/${req.file.filename}`;
 				} catch (err) {
-					console.log(err);
+					console.error(err);
 				} finally {
 					next();
 				}
