@@ -38,7 +38,7 @@ const upload = multer({
 
 const singleFileUpload = {
 	profileImageUpload: (req, res, next) => {
-		const profileImageUpload = upload.single("profile_image");
+		const profileImageUpload = upload.single("image");
 		profileImageUpload(req, res, (err) => {
 			if (err) {
 				responseForm.error(res, err, 400);
