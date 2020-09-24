@@ -1,0 +1,19 @@
+{
+  "name": "zwallet-backend",
+  "version": "1.0.0",
+  "description": "backend for zwallet. a digital wallet application for mobile.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/tavvfiq/zwallet-backend.git"
+  },
+  "author": "taufiq widi",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tavvfiq/zwallet-backend/issues"
+  },
+  "homepage": "https://github.com/tavvfiq/zwallet-backend#readme"
+}
