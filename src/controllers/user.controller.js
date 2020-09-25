@@ -12,6 +12,16 @@ const userController = {
 				formResponse.error(res, err, 500);
 			});
 	},
+	addContact: (req, res) => {
+		userModel
+			.addContact(req.body)
+			.then((data) => {
+				formResponse.success(res, data, 200);
+			})
+			.catch((err) => {
+				formResponse.error(res, err, 500);
+			});
+	},
 };
 
 module.exports = userController;

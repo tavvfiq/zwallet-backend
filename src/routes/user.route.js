@@ -8,4 +8,6 @@ userRouter.patch(
 	userController.updateUser
 );
 
+userRouter.post("/contact", userController.addContact);
+
 module.exports = userRouter;
