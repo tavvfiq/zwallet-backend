@@ -1,7 +1,8 @@
 const db = require("../config/db.config");
+const { DateTime } = require("luxon");
 
 const transactionModel = {
-	sendMoney: (body) => {
+	doTransaction: (body) => {
 		return new Promise((resolve, reject) => {
 			const transactionModel = "INSERT INTO transaction SET ?;";
 			db.query(
@@ -12,7 +13,6 @@ const transactionModel = {
 						console.log(err);
 						reject({ msg: "Transaction failed (add transaction)" });
 					}
-					console.log(resData.insertId);
 					//decrease sender balance
 					const balanceQuery =
 						"SELECT balance FROM user_detail WHERE user_detail.user_id = ?;";
@@ -22,8 +22,7 @@ const transactionModel = {
 						(err, resDataSender) => {
 							if (err) {
 								reject({
-									msg:
-										"Transaction failed (read sender balance)",
+									msg: "Transaction failed",
 								});
 							}
 							const changeBalanceQuery =
@@ -40,8 +39,7 @@ const transactionModel = {
 									if (err) {
 										console.log(err);
 										reject({
-											msg:
-												"Transaction failed (update sender balance)",
+											msg: "Transaction failed",
 										});
 									}
 									//increase receiver balance
@@ -51,8 +49,7 @@ const transactionModel = {
 										(err, resDataReceiver) => {
 											if (err) {
 												reject({
-													msg:
-														"Transaction failed (read receiver balance)",
+													msg: "Transaction failed",
 												});
 											}
 											newBalance =
@@ -70,7 +67,7 @@ const transactionModel = {
 													if (err) {
 														reject({
 															msg:
-																"Transaction failed (update receiver balance)",
+																"Transaction failed",
 														});
 													}
 													resolve({
@@ -99,11 +96,11 @@ const transactionModel = {
 		return new Promise((resolve, reject) => {
 			const topUpQuery =
 				"INSERT INTO transaction SET ?; SELECT balance FROM user_detail WHERE user_detail.user_id = ?;";
-			db.query(topUpQuery, [body, body.sender_id], (err, resData) => {
+			db.query(topUpQuery, [body, body.receiver_id], (err, resData) => {
 				if (err) {
 					console.log(err);
 					reject({
-						msg: "Transaction failed (read sender balance)",
+						msg: "Transaction failed",
 					});
 				}
 				const addBalanceQuery =
@@ -114,13 +111,12 @@ const transactionModel = {
 						: Number(resData[1][0].balance) + Number(body.amount);
 				db.query(
 					addBalanceQuery,
-					[newBalance, body.sender_id],
+					[newBalance, body.receiver_id],
 					(err) => {
 						if (err) {
 							console.log(err);
 							reject({
-								msg:
-									"Transaction failed (update sender balance)",
+								msg: "Top Up failed",
 							});
 						}
 						resolve({
@@ -132,6 +128,47 @@ const transactionModel = {
 					}
 				);
 			});
+		});
+	},
+	getTransactionHistory: (query, body) => {
+		return new Promise((resolve, reject) => {
+			const startOfTheWeek = DateTime.local().startOf("week").toISODate();
+			const endOfTheWeek = DateTime.local()
+				.startOf("week")
+				.plus({ days: 7 })
+				.toISODate();
+			console.log(startOfTheWeek, endOfTheWeek);
+			const getHistoryQuery =
+				"SELECT users.id, users.username, user_detail.image, transaction.transaction_name, transaction.transaction_type, transaction.amount FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.sender_id WHERE transaction.receiver_id = ? AND transaction.date BETWEEN ? AND ?; SELECT users.id, users.username, user_detail.image, transaction.transaction_name, transaction.transaction_type, transaction.amount FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.receiver_id WHERE transaction.sender_id = ? AND transaction.date BETWEEN ? AND ?; SELECT users.id, users.username, user_detail.image, transaction.transaction_name, transaction.transaction_type, transaction.amount FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.receiver_id WHERE transaction.receiver_id = ? AND transaction.transaction_name = ? AND transaction.date BETWEEN ? AND ?;";
+			db.query(
+				getHistoryQuery,
+				[
+					body.id,
+					startOfTheWeek,
+					endOfTheWeek,
+					body.id,
+					startOfTheWeek,
+					endOfTheWeek,
+					body.id,
+					"Top Up",
+					startOfTheWeek,
+					endOfTheWeek,
+				],
+				(err, data) => {
+					if (err) {
+						console.error(err);
+						reject(err);
+					}
+					const transHistory = [
+						...data[0].map((item) => {
+							return { ...item, transaction_type: "in" };
+						}),
+						...data[1],
+						...data[2],
+					];
+					resolve(transHistory);
+				}
+			);
 		});
 	},
 };

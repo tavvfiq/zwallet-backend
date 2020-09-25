@@ -1,4 +1,5 @@
 const db = require("../config/db.config");
+const _ = require("underscore");
 
 const userModel = {
 	updateUser: (id, body) => {
@@ -36,7 +37,7 @@ const userModel = {
 								reject(err);
 							}
 							resolve({
-								msg: `You are now friends with ${data[2][0].username}`,
+								msg: `You are now friend with ${data[2][0].username}`,
 							});
 						}
 					);
@@ -44,8 +45,23 @@ const userModel = {
 			);
 		});
 	},
-	getContactList: (query) => {
-		const getContactList = "";
+	getContactList: (id, query) => {
+		return new Promise((resolve, reject) => {
+			const offset = (Number(query.page) - 1) * Number(query.limit);
+			const getContactList = `SELECT username, user_detail.image, user_detail.phone_number FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN contacts ON contacts.contact_id = users.id WHERE contacts.user_id = ? AND users.username LIKE '%${query.search}%' ORDER BY username ASC LIMIT ? OFFSET ?;`;
+			db.query(
+				getContactList,
+				[id, Number(query.limit), offset],
+				(err, contact) => {
+					if (err) {
+						console.error(err);
+						reject(err);
+					}
+					console.log(contact);
+					resolve(contact);
+				}
+			);
+		});
 	},
 };
 

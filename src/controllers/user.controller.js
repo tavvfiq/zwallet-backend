@@ -22,6 +22,23 @@ const userController = {
 				formResponse.error(res, err, 500);
 			});
 	},
+	getContactList: (req, res) => {
+		userModel
+			.getContactList(req.params.id, req.query)
+			.then((contact) => {
+				formResponse.pagination(
+					req.params.id,
+					req.query,
+					res,
+					{ contact },
+					200
+				);
+			})
+			.catch((err) => {
+				console.log(err);
+				formResponse.error(res, err, 500);
+			});
+	},
 };
 
 module.exports = userController;
