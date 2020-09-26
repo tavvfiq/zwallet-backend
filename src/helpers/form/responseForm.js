@@ -2,6 +2,7 @@ const responseForm = {
 	success: function (res, data, status) {
 		const responseObj = {
 			isSuccess: true,
+			isTokenValid: true,
 			status: status,
 			data,
 		};
@@ -10,8 +11,17 @@ const responseForm = {
 	error: function (res, err, status) {
 		const responseObj = {
 			isSuccess: false,
+			isTokenValid: true,
 			status: status,
 			data: err,
+		};
+		res.json(responseObj);
+	},
+	tokenInvalid: function (res, err) {
+		const responseObj = {
+			isSuccess: false,
+			isTokenValid: false,
+			msg: err,
 		};
 		res.json(responseObj);
 	},

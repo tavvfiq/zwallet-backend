@@ -15,7 +15,7 @@ const authModel = {
 						reject({ msg: "unknown error" });
 					}
 					const registerQuery =
-						"INSERT INTO users SET ?;INSERT INTO user_detail SET user_id=LAST_INSERT_ID();SELECT id, username, user_detail.image, user_detail.phone_number, user_detail.balance FROM users JOIN user_detail ON users.id = user_detail.user_id  WHERE users.email=?;";
+						"INSERT INTO users SET ?;INSERT INTO user_detail SET user_id=LAST_INSERT_ID();SELECT id, username, pin, user_detail.image, user_detail.phone_number, user_detail.balance FROM users JOIN user_detail ON users.id = user_detail.user_id  WHERE users.email=?;";
 					const newBody = { ...body, password: hashedPassword };
 					db.query(
 						registerQuery,
@@ -28,11 +28,15 @@ const authModel = {
 									};
 									const token = jwt.sign(
 										payload,
-										process.env.SECRET_KEY
+										process.env.SECRET_KEY,
+										{
+											expiresIn: "2h",
+										}
 									);
 									const {
 										id,
 										username,
+										pin,
 										image,
 										phone_number,
 										balance,
@@ -41,9 +45,10 @@ const authModel = {
 									resolve({
 										id,
 										username,
+										pin,
 										image,
 										phone_number,
-										balance,
+										balance: Number(balance),
 										msg,
 										token,
 									});
@@ -65,7 +70,7 @@ const authModel = {
 	login: (body) => {
 		return new Promise((resolve, reject) => {
 			const loginQuery =
-				"SELECT id, username, email, password, user_detail.phone_number, user_detail.balance FROM users JOIN user_detail ON users.id = user_detail.user_id WHERE email=?;";
+				"SELECT id, username, email, password, pin, user_detail.image, user_detail.phone_number, user_detail.balance FROM users JOIN user_detail ON users.id = user_detail.user_id WHERE email=?;";
 			db.query(loginQuery, [body.email], (err, data) => {
 				if (err) {
 					reject({ msg: "query error" });
@@ -85,6 +90,7 @@ const authModel = {
 								const {
 									id,
 									username,
+									pin,
 									phone_number,
 									image,
 									balance,
@@ -94,20 +100,24 @@ const authModel = {
 								};
 								const token = jwt.sign(
 									payload,
-									process.env.SECRET_KEY
+									process.env.SECRET_KEY,
+									{
+										expiresIn: "2h",
+									}
 								);
 								const msg = "Successfully log in";
 								resolve({
 									id,
 									username,
+									pin,
 									image,
 									phone_number,
-									balance,
+									balance: Number(balance),
 									msg,
 									token,
 								});
 							} else {
-								reject({ msg: "Wrong password" });
+								reject({ msg: "Wrong email or password" });
 							}
 						}
 					);

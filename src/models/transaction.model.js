@@ -130,7 +130,7 @@ const transactionModel = {
 			});
 		});
 	},
-	getTransactionHistory: (query, body) => {
+	getTransactionHistory: (id, query) => {
 		return new Promise((resolve, reject) => {
 			const startOfTheWeek = DateTime.local().startOf("week").toISODate();
 			const endOfTheWeek = DateTime.local()
@@ -143,13 +143,13 @@ const transactionModel = {
 			db.query(
 				getHistoryQuery,
 				[
-					body.id,
+					id,
 					startOfTheWeek,
 					endOfTheWeek,
-					body.id,
+					id,
 					startOfTheWeek,
 					endOfTheWeek,
-					body.id,
+					id,
 					"Top Up",
 					startOfTheWeek,
 					endOfTheWeek,

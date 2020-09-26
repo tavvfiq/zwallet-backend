@@ -8,7 +8,7 @@ userRouter.patch(
 	userController.updateUser
 );
 
-userRouter.get("/:id", userController.getContactList);
+userRouter.get("/contact/:id", userController.getContactList);
 userRouter.post("/contact", userController.addContact);
 
 module.exports = userRouter;

@@ -25,7 +25,7 @@ const transactionController = {
 	},
 	getTransactionHistory: (req, res) => {
 		transactionModel
-			.getTransactionHistory(req.query, req.body)
+			.getTransactionHistory(req.params.id, req.query)
 			.then((data) => {
 				formResponse.success(res, data, 200);
 			})
