@@ -3,6 +3,7 @@ const userModel = require("../models/user.model");
 
 const userController = {
 	updateUser: (req, res) => {
+		console.log(req.body);
 		userModel
 			.updateUser(req.params.id, req.body)
 			.then((data) => {
@@ -25,12 +26,12 @@ const userController = {
 	getContactList: (req, res) => {
 		userModel
 			.getContactList(req.params.id, req.query)
-			.then((contact) => {
+			.then((contacts) => {
 				formResponse.pagination(
 					req.params.id,
 					req.query,
 					res,
-					{ contact },
+					{ contacts },
 					200
 				);
 			})

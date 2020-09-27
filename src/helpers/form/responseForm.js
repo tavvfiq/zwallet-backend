@@ -25,12 +25,12 @@ const responseForm = {
 		};
 		res.json(responseObj);
 	},
-	pagination: function (id, query, res, { contact }, status) {
+	pagination: function (id, query, res, { contacts }, status) {
 		let page = query.page;
 		let limit = 0;
 		let prevPage = "";
 		let nextPage = "";
-		if (contact.length !== 0) {
+		if (contacts.length !== 0) {
 			page = Number(query.page);
 			limit = Number(query.limit);
 			prevPage =
@@ -39,7 +39,7 @@ const responseForm = {
 					: `/user/${id}?search=${query.search}&page=${
 							page - 1
 					  }&limit=${limit}`;
-			contact.length < limit
+			contacts.length < limit
 				? ""
 				: (nextPage = `/user/${id}?search=${query.search}&page=${
 						page + 1
@@ -48,7 +48,7 @@ const responseForm = {
 		const resObj = {
 			isSuccess: true,
 			status: status,
-			contact,
+			contacts,
 			pageInfo: {
 				page,
 				prevPage,

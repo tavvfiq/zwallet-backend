@@ -7,10 +7,15 @@ const storage = multer.diskStorage({
 		cb(null, "./public/images");
 	},
 	filename: (req, file, cb) => {
-		const nameFormat = `images-${req.body.username
-			.replace(" ", "")
-			.toLowerCase()}${path.extname(file.originalname)}`;
-		cb(null, nameFormat);
+		let nameFormat;
+		try {
+			nameFormat = `images-${req.body.username
+				.replace(" ", "")
+				.toLowerCase()}${path.extname(file.originalname)}`;
+		} catch (err) {
+		} finally {
+			cb(null, nameFormat);
+		}
 	},
 });
 
@@ -46,7 +51,7 @@ const singleFileUpload = {
 				try {
 					req.body.image = `${process.env.API_URL}/images/${req.file.filename}`;
 				} catch (err) {
-					console.error(err);
+					// console.error(err);
 				} finally {
 					next();
 				}
