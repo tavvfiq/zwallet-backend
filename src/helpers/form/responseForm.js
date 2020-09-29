@@ -58,19 +58,19 @@ const responseForm = {
 		};
 		res.json(resObj);
 	},
-	paginationTransaction: (id, query, res, { transHistory }, status) => {
+	paginationTransaction: (id, query, res, { transactions }, status) => {
 		let page = query.page;
 		let limit = 0;
 		let prevPage = "";
 		let nextPage = "";
-		if (transHistory.length !== 0) {
+		if (transactions.length !== 0) {
 			page = Number(query.page);
 			limit = Number(query.limit);
 			prevPage =
 				page === 1
 					? ""
 					: `/transaction/${id}?page=${page - 1}&limit=${limit}`;
-			transHistory.length < limit
+			transactions.length < limit
 				? ""
 				: (nextPage = `/transaction/${id}?page=${
 						page + 1
@@ -80,7 +80,7 @@ const responseForm = {
 			isSuccess: true,
 			isTokenValid: true,
 			status: status,
-			transHistory,
+			transactions,
 			pageInfo: {
 				page,
 				prevPage,

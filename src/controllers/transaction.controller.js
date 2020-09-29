@@ -26,12 +26,12 @@ const transactionController = {
 	getTransactionHistory: (req, res) => {
 		transactionModel
 			.getTransactionHistory(req.params.id, req.query)
-			.then((transHistory) => {
+			.then((transactions) => {
 				formResponse.paginationTransaction(
 					req.params.id,
 					req.query,
 					res,
-					{ transHistory },
+					{ transactions },
 					200
 				);
 			})

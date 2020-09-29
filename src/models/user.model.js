@@ -58,7 +58,7 @@ const userModel = {
 						console.error(err);
 						reject(err);
 					}
-					console.log(contacts);
+					// console.log(contacts);
 					resolve(contacts);
 				}
 			);
