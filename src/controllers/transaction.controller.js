@@ -26,10 +26,17 @@ const transactionController = {
 	getTransactionHistory: (req, res) => {
 		transactionModel
 			.getTransactionHistory(req.params.id, req.query)
-			.then((data) => {
-				formResponse.success(res, data, 200);
+			.then((transHistory) => {
+				formResponse.paginationTransaction(
+					req.params.id,
+					req.query,
+					res,
+					{ transHistory },
+					200
+				);
 			})
 			.catch((err) => {
+				// console.log(err);
 				formResponse.error(res, err, 500);
 			});
 	},

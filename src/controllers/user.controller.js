@@ -40,6 +40,16 @@ const userController = {
 				formResponse.error(res, err, 500);
 			});
 	},
+	getUserById: (req, res) => {
+		userModel
+			.getUserById(req.params.id)
+			.then((data) => {
+				formResponse.success(res, data, 200);
+			})
+			.catch((err) => {
+				formResponse.error(res, err, 500);
+			});
+	},
 };
 
 module.exports = userController;

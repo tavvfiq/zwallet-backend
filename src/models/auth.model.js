@@ -15,7 +15,7 @@ const authModel = {
 						reject({ msg: "unknown error" });
 					}
 					const registerQuery =
-						"INSERT INTO users SET ?;INSERT INTO user_detail SET user_id=LAST_INSERT_ID();SELECT id, username, pin, user_detail.image, user_detail.phone_number, user_detail.balance FROM users JOIN user_detail ON users.id = user_detail.user_id  WHERE users.email=?;";
+						"INSERT INTO users SET ?;INSERT INTO user_detail SET user_id=LAST_INSERT_ID();SELECT id, username, pin, user_detail.image, user_detail.phone_number, user_detail.num_of_contact, user_detail.balance FROM users JOIN user_detail ON users.id = user_detail.user_id  WHERE users.email=?;";
 					const newBody = { ...body, password: hashedPassword };
 					db.query(
 						registerQuery,
@@ -39,6 +39,7 @@ const authModel = {
 										pin,
 										image,
 										phone_number,
+										num_of_contact,
 										balance,
 									} = data[2][0];
 									const msg = "Register success";
@@ -48,6 +49,7 @@ const authModel = {
 										pin,
 										image,
 										phone_number,
+										num_of_contact,
 										balance: Number(balance),
 										msg,
 										token,
@@ -70,7 +72,7 @@ const authModel = {
 	login: (body) => {
 		return new Promise((resolve, reject) => {
 			const loginQuery =
-				"SELECT id, username, email, password, pin, user_detail.image, user_detail.phone_number, user_detail.balance FROM users JOIN user_detail ON users.id = user_detail.user_id WHERE email=?;";
+				"SELECT id, username, email, password, pin, user_detail.image, user_detail.phone_number, user_detail.num_of_contact,user_detail.balance FROM users JOIN user_detail ON users.id = user_detail.user_id WHERE email=?;";
 			db.query(loginQuery, [body.email], (err, data) => {
 				if (err) {
 					reject({ msg: "query error" });
@@ -93,6 +95,7 @@ const authModel = {
 									pin,
 									phone_number,
 									image,
+									num_of_contact,
 									balance,
 								} = data[0];
 								const payload = {
@@ -112,6 +115,7 @@ const authModel = {
 									pin,
 									image,
 									phone_number,
+									num_of_contact,
 									balance: Number(balance),
 									msg,
 									token,

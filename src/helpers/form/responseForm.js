@@ -36,19 +36,51 @@ const responseForm = {
 			prevPage =
 				page === 1
 					? ""
-					: `/user/${id}?search=${query.search}&page=${
+					: `/user/contact/${id}?search=${query.search}&page=${
 							page - 1
 					  }&limit=${limit}`;
 			contacts.length < limit
 				? ""
-				: (nextPage = `/user/${id}?search=${query.search}&page=${
+				: (nextPage = `/user/contact/${id}?search=${
+						query.search
+				  }&page=${page + 1}&limit=${limit}`);
+		}
+		const resObj = {
+			isSuccess: true,
+			isTokenValid: true,
+			status: status,
+			contacts,
+			pageInfo: {
+				page,
+				prevPage,
+				nextPage,
+			},
+		};
+		res.json(resObj);
+	},
+	paginationTransaction: (id, query, res, { transHistory }, status) => {
+		let page = query.page;
+		let limit = 0;
+		let prevPage = "";
+		let nextPage = "";
+		if (transHistory.length !== 0) {
+			page = Number(query.page);
+			limit = Number(query.limit);
+			prevPage =
+				page === 1
+					? ""
+					: `/transaction/${id}?page=${page - 1}&limit=${limit}`;
+			transHistory.length < limit
+				? ""
+				: (nextPage = `/transaction/${id}?page=${
 						page + 1
 				  }&limit=${limit}`);
 		}
 		const resObj = {
 			isSuccess: true,
+			isTokenValid: true,
 			status: status,
-			contacts,
+			transHistory,
 			pageInfo: {
 				page,
 				prevPage,

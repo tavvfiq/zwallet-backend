@@ -132,27 +132,27 @@ const transactionModel = {
 	},
 	getTransactionHistory: (id, query) => {
 		return new Promise((resolve, reject) => {
+			const offset = (Number(query.page) - 1) * Number(query.limit);
 			const startOfTheWeek = DateTime.local().startOf("week").toISODate();
 			const endOfTheWeek = DateTime.local()
 				.startOf("week")
 				.plus({ days: 7 })
 				.toISODate();
-			console.log(startOfTheWeek, endOfTheWeek);
 			const getHistoryQuery =
-				"SELECT users.id, users.username, user_detail.image, transaction.transaction_name, transaction.transaction_type, transaction.amount FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.sender_id WHERE transaction.receiver_id = ? AND transaction.date BETWEEN ? AND ?; SELECT users.id, users.username, user_detail.image, transaction.transaction_name, transaction.transaction_type, transaction.amount FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.receiver_id WHERE transaction.sender_id = ? AND transaction.date BETWEEN ? AND ?; SELECT users.id, users.username, user_detail.image, transaction.transaction_name, transaction.transaction_type, transaction.amount FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.receiver_id WHERE transaction.receiver_id = ? AND transaction.transaction_name = ? AND transaction.date BETWEEN ? AND ?;";
+				"SELECT users.id, users.username, user_detail.image, transaction.transaction_name, transaction.transaction_type, transaction.amount, transaction.date FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.sender_id WHERE transaction.receiver_id = ? ORDER BY transaction.date DESC LIMIT ? OFFSET ?; SELECT users.id, users.username, user_detail.image, transaction.transaction_name, transaction.transaction_type, transaction.amount, transaction.date FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.receiver_id WHERE transaction.sender_id = ? ORDER BY transaction.date DESC LIMIT ? OFFSET ?; SELECT users.id, users.username, user_detail.image, transaction.transaction_name, transaction.transaction_type, transaction.amount, transaction.date FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.receiver_id WHERE transaction.receiver_id = ? AND transaction.transaction_name = ? ORDER BY transaction.date DESC LIMIT ? OFFSET ?;";
 			db.query(
 				getHistoryQuery,
 				[
 					id,
-					startOfTheWeek,
-					endOfTheWeek,
+					Math.round(Number(query.limit) / 3),
+					offset,
 					id,
-					startOfTheWeek,
-					endOfTheWeek,
+					Math.round(Number(query.limit) / 3),
+					offset,
 					id,
 					"Top Up",
-					startOfTheWeek,
-					endOfTheWeek,
+					Math.round(Number(query.limit) / 3),
+					offset,
 				],
 				(err, data) => {
 					if (err) {
@@ -165,7 +165,10 @@ const transactionModel = {
 						}),
 						...data[1],
 						...data[2],
-					];
+					].sort((a, b) => {
+						return b.date - a.date;
+					});
+					console.log(data);
 					resolve(transHistory);
 				}
 			);

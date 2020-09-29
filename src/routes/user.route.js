@@ -10,6 +10,8 @@ userRouter.patch(
 	userController.updateUser
 );
 
+userRouter.get("/:id", checkToken, userController.getUserById);
+
 userRouter.get("/contact/:id", checkToken, userController.getContactList);
 userRouter.post("/contact", checkToken, userController.addContact);
 
