@@ -49,7 +49,7 @@ const singleFileUpload = {
 				responseForm.error(res, err, 400);
 			} else {
 				try {
-					req.body.image = `${process.env.API_URL}/images/${req.file.filename}`;
+					req.body.image = `/images/${req.file.filename}`;
 				} catch (err) {
 					// console.error(err);
 				} finally {

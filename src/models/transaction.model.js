@@ -139,37 +139,28 @@ const transactionModel = {
 				.plus({ days: 7 })
 				.toISODate();
 			const getHistoryQuery =
-				"SELECT transaction.id as transaction_id, users.id, users.username, user_detail.image, transaction.transaction_name, transaction.transaction_type, transaction.amount, transaction.date FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.sender_id WHERE transaction.receiver_id = ? ORDER BY transaction.date DESC LIMIT ? OFFSET ?; SELECT transaction.id as transaction_id, users.id, users.username, user_detail.image, transaction.transaction_name, transaction.transaction_type, transaction.amount, transaction.date FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.receiver_id WHERE transaction.sender_id = ? ORDER BY transaction.date DESC LIMIT ? OFFSET ?; SELECT transaction.id as transaction_id, users.id, users.username, user_detail.image, transaction.transaction_name, transaction.transaction_type, transaction.amount, transaction.date FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.receiver_id WHERE transaction.receiver_id = ? AND transaction.transaction_name = ? ORDER BY transaction.date DESC LIMIT ? OFFSET ?;";
+				"SELECT users.id, users.username, user_detail.image, transaction.id as transaction_id, transaction.receiver_id, transaction.transaction_name, transaction.transaction_type, transaction.amount, transaction.date as date FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.sender_id WHERE transaction.receiver_id = ? UNION SELECT users.id, users.username, user_detail.image, transaction.id as transaction_id, transaction.receiver_id, transaction.transaction_name, transaction.transaction_type, transaction.amount, transaction.date as date FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.receiver_id WHERE transaction.sender_id = ? UNION SELECT users.id, users.username, user_detail.image, transaction.id as transaction_id, transaction.receiver_id, transaction.transaction_name, transaction.transaction_type, transaction.amount, transaction.date as date FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN transaction ON users.id = transaction.receiver_id WHERE transaction.receiver_id = ? AND transaction.transaction_name = ? ORDER BY date DESC LIMIT ? OFFSET ?";
 			db.query(
 				getHistoryQuery,
-				[
-					id,
-					Math.round(Number(query.limit) / 3),
-					offset,
-					id,
-					Math.round(Number(query.limit) / 3),
-					offset,
-					id,
-					"Top Up",
-					Math.round(Number(query.limit) / 3),
-					offset,
-				],
+				[id, id, id, "Top Up", Number(query.limit), offset],
 				(err, data) => {
 					if (err) {
 						console.error(err);
 						reject(err);
 					}
-					const transactions = [
-						...data[0].map((item) => {
-							return { ...item, transaction_type: "in" };
-						}),
-						...data[1],
-						...data[2],
-					].sort((a, b) => {
-						return b.date - a.date;
-					});
+					const transactions = data;
 					// console.log(data);
-					resolve(transactions);
+					resolve(
+						transactions.map((transaction) => {
+							if (transaction.receiver_id === Number(id)) {
+								return {
+									...transaction,
+									transaction_type: "in",
+								};
+							}
+							return transaction;
+						})
+					);
 				}
 			);
 		});
