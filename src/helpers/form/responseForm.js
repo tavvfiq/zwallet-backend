@@ -44,6 +44,15 @@ const responseForm = {
 				: (nextPage = `/user/contact/${id}?search=${
 						query.search
 				  }&page=${page + 1}&limit=${limit}`);
+		} else {
+			page = Number(query.page);
+			limit = Number(query.limit);
+			prevPage =
+				page === 1
+					? ""
+					: `/user/contact/${id}?search=${query.search}&page=${
+							page - 1
+					  }&limit=${limit}`;
 		}
 		const resObj = {
 			isSuccess: true,

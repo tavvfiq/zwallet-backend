@@ -143,13 +143,11 @@ const transactionModel = {
 			db.query(
 				getHistoryQuery,
 				[id, id, id, "Top Up", Number(query.limit), offset],
-				(err, data) => {
+				(err, transactions) => {
 					if (err) {
 						console.error(err);
 						reject(err);
 					}
-					const transactions = data;
-					// console.log(data);
 					resolve(
 						transactions.map((transaction) => {
 							if (transaction.receiver_id === Number(id)) {

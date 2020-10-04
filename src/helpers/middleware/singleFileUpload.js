@@ -51,7 +51,7 @@ const singleFileUpload = {
 				try {
 					req.body.image = `/images/${req.file.filename}`;
 				} catch (err) {
-					// console.error(err);
+					console.error(err);
 				} finally {
 					next();
 				}

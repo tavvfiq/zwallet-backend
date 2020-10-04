@@ -15,7 +15,7 @@ const authModel = {
 						reject({ msg: "unknown error" });
 					}
 					const registerQuery =
-						"INSERT INTO users SET ?;INSERT INTO user_detail SET user_id=LAST_INSERT_ID();SELECT id, username, pin, user_detail.image, user_detail.phone_number, user_detail.num_of_contact, user_detail.balance FROM users JOIN user_detail ON users.id = user_detail.user_id  WHERE users.email=?;";
+						"INSERT INTO users SET ?;INSERT INTO user_detail SET user_id=LAST_INSERT_ID();SELECT id, username, email,pin, user_detail.image, user_detail.phone_number, user_detail.num_of_contact, user_detail.balance FROM users JOIN user_detail ON users.id = user_detail.user_id  WHERE users.email=?;";
 					const newBody = { ...body, password: hashedPassword };
 					db.query(
 						registerQuery,
@@ -37,6 +37,7 @@ const authModel = {
 										id,
 										username,
 										pin,
+										email,
 										image,
 										phone_number,
 										num_of_contact,
@@ -47,6 +48,7 @@ const authModel = {
 										id,
 										username,
 										pin,
+										email,
 										image,
 										phone_number,
 										num_of_contact,
@@ -92,6 +94,7 @@ const authModel = {
 								const {
 									id,
 									username,
+									email,
 									pin,
 									phone_number,
 									image,
@@ -112,6 +115,7 @@ const authModel = {
 								resolve({
 									id,
 									username,
+									email,
 									pin,
 									image,
 									phone_number,

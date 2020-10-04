@@ -3,7 +3,6 @@ const userModel = require("../models/user.model");
 
 const userController = {
 	updateUser: (req, res) => {
-		console.log(req.body);
 		userModel
 			.updateUser(req.params.id, req.body)
 			.then((data) => {
