@@ -9,7 +9,7 @@ const storage = multer.diskStorage({
 	filename: (req, file, cb) => {
 		let nameFormat;
 		try {
-			nameFormat = `images-${req.body.username
+			nameFormat = `images-${Date.now()}-${req.body.username
 				.replace(" ", "")
 				.toLowerCase()}${path.extname(file.originalname)}`;
 		} catch (err) {
