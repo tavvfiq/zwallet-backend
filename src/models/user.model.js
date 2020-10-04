@@ -85,7 +85,6 @@ const userModel = {
 						if (err) {
 							reject({ msg: "User not found" });
 						}
-						console.log(data[1][0]);
 						resolve(data[1][0]);
 					}
 				);
