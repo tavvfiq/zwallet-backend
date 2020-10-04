@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const userModel = {
 	updateUser: (id, body) => {
 		return new Promise((resolve, reject) => {
-			if (body.newPassword !== undefined) {
+			if (body.password !== undefined) {
 				const changePasswordQuery =
 					"SELECT password from users WHERE users.id = ?";
 				db.query(changePasswordQuery, [id], (err, result) => {
@@ -61,6 +61,54 @@ const userModel = {
 							}
 						}
 					);
+				});
+			} else if (body.newPassword !== undefined) {
+				bcrypt.genSalt(10, (err, salt) => {
+					bcrypt.hash(
+						body.newPassword,
+						salt,
+						(err, hashedPassword) => {
+							if (err) {
+								reject({
+									msg: "unknown error",
+								});
+							}
+							const newPasswordQuery =
+								"UPDATE users SET ? WHERE email = ?;";
+							db.query(
+								newPasswordQuery,
+								[
+									{
+										password: hashedPassword,
+									},
+									body.email,
+								],
+								(err) => {
+									if (err) {
+										reject({
+											msg: "Unknown Error",
+										});
+									}
+									resolve({
+										msg: "Reset password success",
+									});
+								}
+							);
+						}
+					);
+				});
+			} else if (body.email !== undefined) {
+				const checkEmailQuery =
+					"SELECT username FROM users WHERE email=?;";
+				db.query(checkEmailQuery, [body.email], (err, res) => {
+					if (err) {
+						reject({ msg: "Server error" });
+					}
+					if (res.length === 0) {
+						reject({ msg: "Email not found" });
+					} else {
+						resolve({ msg: "Email found" });
+					}
 				});
 			} else if (body.newPin !== undefined) {
 				const newPinQuery = "UPDATE users SET ? WHERE users.id = ?;";

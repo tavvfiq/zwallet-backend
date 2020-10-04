@@ -1,5 +1,6 @@
 const multer = require("multer");
 const path = require("path");
+const { reject } = require("underscore");
 const responseForm = require("../form/responseForm");
 
 const storage = multer.diskStorage({
@@ -51,7 +52,8 @@ const singleFileUpload = {
 				try {
 					req.body.image = `/images/${req.file.filename}`;
 				} catch (err) {
-					console.error(err);
+					// console.error(err);
+					// responseForm.error(res, { msg: "Server error" }, 400);
 				} finally {
 					next();
 				}
