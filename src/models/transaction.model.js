@@ -114,6 +114,7 @@ const transactionModel = {
 						resolve({
 							transId: resData[0].insertId,
 							transaction_name: body.transaction_name,
+							receiver_id: body.receiver_id,
 							amount: Number(body.amount),
 							msg: "Top Up success",
 						});

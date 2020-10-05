@@ -1,6 +1,7 @@
 const formResponse = require("../helpers/form/responseForm");
 const transactionModel = require("../models/transaction.model");
 const transansactionModel = require("../models/transaction.model");
+const { io } = require("../../sharedVariable");
 
 const transactionController = {
 	doTransaction: (req, res) => {
@@ -17,6 +18,15 @@ const transactionController = {
 		transactionModel
 			.topUp(req.body)
 			.then((data) => {
+				const { receiver_id, amount, transaction_name } = data;
+				const title = transaction_name + " Success";
+				const message = `You have successfully add Rp${amount} to your balance`;
+				try {
+					io.to(receiver_id).emit("transaction", { title, message });
+				} catch (err) {
+					console.log(err);
+				}
+
 				formResponse.success(res, data, 200);
 			})
 			.catch((err) => {

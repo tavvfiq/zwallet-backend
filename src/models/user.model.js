@@ -196,7 +196,7 @@ const userModel = {
 				if (err) {
 					reject(err);
 				}
-				resolve(data);
+				resolve(data[0]);
 			});
 		});
 	},
