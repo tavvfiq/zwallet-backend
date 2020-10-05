@@ -4,7 +4,9 @@ module.exports = (io) => {
 		socket.join(id);
 		console.log("user connected with id: ", id);
 		socket.on("transaction", ({ title, message, receiverId }) => {
-			console.log(title, message, receiverId);
+			socket.broadcast
+				.to(receiverId)
+				.emit("transaction", { title, message });
 		});
 	});
 };
