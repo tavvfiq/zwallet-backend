@@ -13,7 +13,7 @@ const transactionModel = {
 				}
 				//decrease sender balance
 				const balanceQuery =
-					"SELECT balance FROM user_detail WHERE user_detail.user_id = ?;";
+					"SELECT username, user_detail.balance FROM users JOIN user_detail ON users.id = user_detail.user_id WHERE user_detail.user_id = ?;";
 				db.query(
 					balanceQuery,
 					[body.sender_id],
@@ -69,6 +69,9 @@ const transactionModel = {
 												}
 												resolve({
 													transId: resData.insertId,
+													sender_name:
+														resDataSender[0]
+															.username,
 													...body,
 													amount: Number(body.amount),
 													msg: "Transaction Success",

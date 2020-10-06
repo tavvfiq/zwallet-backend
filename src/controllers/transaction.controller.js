@@ -8,6 +8,17 @@ const transactionController = {
 		transansactionModel
 			.doTransaction(req.body)
 			.then((data) => {
+				const {
+					sender_name,
+					receiver_id,
+					amount,
+					transaction_name,
+				} = data;
+				const title = transaction_name + " Success";
+				const message = `${sender_name} has transfer you by Rp${amount.toLocaleString(
+					"id-ID"
+				)}`;
+				io.to(receiver_id).emit("transaction", { title, message });
 				formResponse.success(res, data, 200);
 			})
 			.catch((err) => {
