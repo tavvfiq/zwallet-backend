@@ -15,7 +15,7 @@ const transactionController = {
 					transaction_name,
 				} = data;
 				const title = transaction_name + " Success";
-				const message = `${sender_name} has transfer you by Rp${amount.toLocaleString(
+				const message = `${sender_name} has transferred you by Rp${amount.toLocaleString(
 					"id-ID"
 				)}`;
 				io.to(receiver_id).emit("transaction", { title, message });
