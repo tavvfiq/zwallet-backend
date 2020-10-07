@@ -31,7 +31,9 @@ const transactionController = {
 			.then((data) => {
 				const { receiver_id, amount, transaction_name } = data;
 				const title = transaction_name + " Success";
-				const message = `You have successfully add Rp${amount} to your balance`;
+				const message = `You have successfully add Rp${amount.toLocaleString(
+					"id-ID"
+				)} to your balance`;
 				try {
 					io.to(receiver_id).emit("transaction", { title, message });
 				} catch (err) {
