@@ -147,23 +147,34 @@ const userModel = {
 				addContactQuery,
 				[body, body.user_id, body.contact_id],
 				(err, data) => {
-					console.log(data);
 					if (err) {
 						reject(err);
 					}
 					const changeNumOfContact =
-						"UPDATE user_detail SET num_of_contact=? WHERE user_detail.user_id = ?;";
+						"UPDATE user_detail SET num_of_contact=? WHERE user_detail.user_id = ?;SELECT num_of_contact FROM user_detail WHERE user_detail.user_id = ?";
 					db.query(
 						changeNumOfContact,
-						[data[1][0].num_of_contact + 1, body.user_id],
-						(err) => {
+						[
+							data[1][0].num_of_contact + 1,
+							body.user_id,
+							body.contact_id,
+						],
+						(err, res) => {
 							if (err) {
-								console.error(err);
 								reject(err);
 							}
-							resolve({
-								msg: `You are now friend with ${data[2][0].username}`,
-							});
+							db.query(
+								"UPDATE user_detail SET num_of_contact=? WHERE user_detail.user_id = ?;",
+								[res[1][0].num_of_contact + 1, body.contact_id],
+								(err) => {
+									if (err) {
+										reject(err);
+									}
+									resolve({
+										msg: `You are now friend with ${data[2][0].username}`,
+									});
+								}
+							);
 						}
 					);
 				}
@@ -173,10 +184,10 @@ const userModel = {
 	getContactList: (id, query) => {
 		return new Promise((resolve, reject) => {
 			const offset = (Number(query.page) - 1) * Number(query.limit);
-			const getContactList = `SELECT id,username, user_detail.image, user_detail.phone_number FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN contacts ON contacts.contact_id = users.id WHERE contacts.user_id = ? AND users.username LIKE '%${query.search}%' ORDER BY username ASC LIMIT ? OFFSET ?;`;
+			const getContactList = `SELECT id,username, user_detail.image, user_detail.phone_number FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN contacts ON contacts.contact_id = users.id WHERE contacts.user_id = ? AND users.username LIKE '%${query.search}%' UNION SELECT id,username, user_detail.image, user_detail.phone_number FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN contacts ON contacts.user_id = users.id WHERE contacts.contact_id = ? AND users.username LIKE '%${query.search}%' ORDER BY username ASC LIMIT ? OFFSET ?;`;
 			db.query(
 				getContactList,
-				[id, Number(query.limit), offset],
+				[id, id, Number(query.limit), offset],
 				(err, contacts) => {
 					if (err) {
 						console.error(err);
