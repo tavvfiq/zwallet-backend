@@ -1,6 +1,16 @@
 const db = require("../config/db.config");
 const _ = require("underscore");
 const bcrypt = require("bcrypt");
+const mailer = require("nodemailer");
+const cryptoJS = require("crypto-js");
+
+const transporter = mailer.createTransport({
+	service: "gmail",
+	auth: {
+		user: "taufiqwidinugroho@gmail.com",
+		pass: process.env.EMAIL_TOKEN,
+	},
+});
 
 const userModel = {
 	updateUser: (id, body) => {
@@ -107,7 +117,28 @@ const userModel = {
 					if (res.length === 0) {
 						reject({ msg: "Email not found" });
 					} else {
-						resolve({ msg: "Email found" });
+						const encryptedEmail = cryptoJS.AES.encrypt(
+							body.email,
+							process.env.RESET_PASSWORD_KEY
+						).toString();
+						const mailOptions = {
+							from: "taufiqwidinugroho@gmail.com",
+							to: body.email,
+							subject: "Reset Password",
+							html: `<p>here is your reset password link. please open it in your phone and keep it secret!.\n</p><p>zwalletapp://ResetPassword/${body.email}</p>`,
+						};
+						// console.log(encryptedEmail);
+						transporter.sendMail(mailOptions, (error) => {
+							if (error) {
+								reject({ msg: "Connection error." });
+								console.log(error);
+							} else {
+								resolve({
+									msg:
+										"Reset password link sent. Please check your email.",
+								});
+							}
+						});
 					}
 				});
 			} else if (body.newPin !== undefined) {
