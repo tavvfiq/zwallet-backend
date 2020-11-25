@@ -36,6 +36,7 @@ PORT=your_port //default 3000
 SOCKET_PORT=your_socket_port //default 8000
 
 API_URL="your_api_url"
+EMAIL="your_email"
 EMAIL_TOKEN='your_email_token'
 SECRET_KEY = "your_secret_key"
 RESET_PASSWORD_KEY = "your_reset_password_key";
