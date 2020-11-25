@@ -7,7 +7,7 @@ const cryptoJS = require("crypto-js");
 const transporter = mailer.createTransport({
 	service: "gmail",
 	auth: {
-		user: "taufiqwidinugroho@gmail.com",
+		user: process.env.EMAIL,
 		pass: process.env.EMAIL_TOKEN,
 	},
 });
