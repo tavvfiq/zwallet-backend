@@ -18,6 +18,7 @@ const transactionController = {
 				const message = `${sender_name} has transferred you by Rp${amount.toLocaleString(
 					"id-ID"
 				)}`;
+				console.log("MSG: ", message, " RID: ", receiver_id);
 				io.to(receiver_id).emit("transaction", { title, message });
 				formResponse.success(res, data, 200);
 			})
