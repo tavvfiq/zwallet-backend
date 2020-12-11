@@ -219,7 +219,8 @@ const userModel = {
 			const getContactList = `SELECT id,username, user_detail.image, user_detail.phone_number FROM users JOIN user_detail ON users.id = user_detail.user_id WHERE id <> ? AND users.username LIKE '%${query.search}%' ORDER BY username ASC LIMIT ? OFFSET ?;`;
 			db.query(
 				getContactList,
-				[id, id, Number(query.limit), offset],
+				// [id, id, Number(query.limit), offset],
+				[id, Number(query.limit), offset],
 				(err, contacts) => {
 					if (err) {
 						console.error(err);
