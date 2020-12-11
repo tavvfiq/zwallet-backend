@@ -216,7 +216,7 @@ const userModel = {
 		return new Promise((resolve, reject) => {
 			const offset = (Number(query.page) - 1) * Number(query.limit);
 			// const getContactList = `SELECT id,username, user_detail.image, user_detail.phone_number FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN contacts ON contacts.contact_id = users.id WHERE contacts.user_id = ? AND users.username LIKE '%${query.search}%' UNION SELECT id,username, user_detail.image, user_detail.phone_number FROM users JOIN user_detail ON users.id = user_detail.user_id JOIN contacts ON contacts.user_id = users.id WHERE contacts.contact_id = ? AND users.username LIKE '%${query.search}%' ORDER BY username ASC LIMIT ? OFFSET ?;`;
-			const getContactList = `SELECT id,username, user_detail.image, user_detail.phone_number FROM users JOIN user_detail ON users.id = user_detail.user_id WHERE id != ? AND users.username LIKE '%${query.search}%' ORDER BY username ASC LIMIT ? OFFSET ?;`;
+			const getContactList = `SELECT id,username, user_detail.image, user_detail.phone_number FROM users JOIN user_detail ON users.id = user_detail.user_id WHERE id <> ? AND users.username LIKE '%${query.search}%' ORDER BY username ASC LIMIT ? OFFSET ?;`;
 			db.query(
 				getContactList,
 				[id, id, Number(query.limit), offset],
